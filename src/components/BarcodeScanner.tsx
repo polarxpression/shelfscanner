@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useRef, useEffect } from 'react';
@@ -22,6 +23,11 @@ export function BarcodeScanner({ onScan, onManualAdd }: BarcodeScannerProps) {
       if (!('BarcodeDetector' in window)) {
         console.error('Barcode Detector is not supported by this browser.');
         setHasCameraPermission(false);
+        toast({
+          variant: 'destructive',
+          title: 'Unsupported Browser',
+          description: "Your browser doesn't support barcode scanning. Try adding items manually.",
+        });
         return;
       }
 
