@@ -84,7 +84,9 @@ export default function HomePage() {
   }
 
   const handleNewItemDetailChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    setNewItemDetails({ ...newItemDetails, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    if ((name === 'shelfColumn' || name === 'shelfRow') && value && !/^\d*$/.test(value)) return;
+    setNewItemDetails({ ...newItemDetails, [name]: value });
   };
   
   const handleNewItemSubmit = (e: React.FormEvent) => {
@@ -124,7 +126,7 @@ export default function HomePage() {
     setNewItemDetails(defaultItemState);
   };
 
-  const handleUpdateItem = (id: string, updates: Partial<Omit<InventoryItemType, 'id' | 'barcode'>>) => {
+  const handleUpdateItem = (id: string, updates: Partial<Omit<InventoryItemType, 'id'>>) => {
     if (!activeList) return;
     const updatedLists = lists.map(list => {
         if (list.id === activeListId) {
@@ -313,8 +315,8 @@ export default function HomePage() {
                       <div className="space-y-2">
                           <Label>Shelf Position (Optional)</Label>
                           <div className="flex gap-2">
-                            <Input id="shelfColumn" name="shelfColumn" type="number" min="0" placeholder="Column" value={newItemDetails.shelfColumn} onChange={handleNewItemDetailChange} />
-                            <Input id="shelfRow" name="shelfRow" type="number" min="0" placeholder="Row" value={newItemDetails.shelfRow} onChange={handleNewItemDetailChange} />
+                            <Input id="shelfColumn" name="shelfColumn" type="text" inputMode="numeric" pattern="[0-9]*" placeholder="Column" value={newItemDetails.shelfColumn} onChange={handleNewItemDetailChange} />
+                            <Input id="shelfRow" name="shelfRow" type="text" inputMode="numeric" pattern="[0-9]*" placeholder="Row" value={newItemDetails.shelfRow} onChange={handleNewItemDetailChange} />
                           </div>
                       </div>
                   </div>

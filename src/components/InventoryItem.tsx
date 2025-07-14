@@ -21,11 +21,12 @@ import {
 
 interface InventoryItemProps {
   item: InventoryItem;
-  onUpdate: (id: string, updates: Partial<Omit<InventoryItem, 'id' | 'barcode'>>) => void;
+  onUpdate: (id: string, updates: Partial<Omit<InventoryItem, 'id'>>) => void;
   onDelete: (id: string) => void;
 }
 
 interface EditFormState {
+    barcode: string;
     name: string;
     description: string;
     quantity: number;
@@ -36,6 +37,7 @@ interface EditFormState {
 export function InventoryItem({ item, onUpdate, onDelete }: InventoryItemProps) {
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [editFormState, setEditFormState] = useState<EditFormState>({
+    barcode: item.barcode,
     name: item.name,
     description: item.description,
     quantity: item.quantity,
@@ -46,6 +48,7 @@ export function InventoryItem({ item, onUpdate, onDelete }: InventoryItemProps) 
   useEffect(() => {
     const [col, row] = item.shelfPosition.split('-');
     setEditFormState({
+        barcode: item.barcode,
         name: item.name,
         description: item.description,
         quantity: item.quantity,
@@ -61,7 +64,9 @@ export function InventoryItem({ item, onUpdate, onDelete }: InventoryItemProps) 
   };
   
   const handleEditFormChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    setEditFormState({ ...editFormState, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    if ((name === 'shelfColumn' || name === 'shelfRow') && value && !/^\d*$/.test(value)) return;
+    setEditFormState({ ...editFormState, [name]: value });
   };
 
   const handleEditSubmit = (e: React.FormEvent) => {
@@ -71,6 +76,7 @@ export function InventoryItem({ item, onUpdate, onDelete }: InventoryItemProps) 
         : '';
         
     onUpdate(item.id, {
+      barcode: editFormState.barcode,
       name: editFormState.name,
       description: editFormState.description,
       quantity: Number(editFormState.quantity) || 0,
@@ -82,6 +88,7 @@ export function InventoryItem({ item, onUpdate, onDelete }: InventoryItemProps) 
   const openEditDialog = () => {
     const [col, row] = item.shelfPosition.split('-');
     setEditFormState({
+        barcode: item.barcode,
         name: item.name,
         description: item.description,
         quantity: item.quantity,
@@ -121,6 +128,10 @@ export function InventoryItem({ item, onUpdate, onDelete }: InventoryItemProps) 
                         <form onSubmit={handleEditSubmit}>
                             <div className="grid gap-4 py-4">
                                <div className="space-y-2">
+                                    <Label htmlFor="barcode">Barcode</Label>
+                                    <Input id="barcode" name="barcode" value={editFormState.barcode} onChange={handleEditFormChange} required />
+                                </div>
+                               <div className="space-y-2">
                                     <Label htmlFor="name">Name (Optional)</Label>
                                     <Input id="name" name="name" value={editFormState.name} onChange={handleEditFormChange} />
                                 </div>
@@ -135,8 +146,8 @@ export function InventoryItem({ item, onUpdate, onDelete }: InventoryItemProps) 
                                 <div className="space-y-2">
                                   <Label>Shelf Position (Optional)</Label>
                                   <div className="flex gap-2">
-                                    <Input id="shelfColumn" name="shelfColumn" type="number" min="0" placeholder="Column" value={editFormState.shelfColumn} onChange={handleEditFormChange} />
-                                    <Input id="shelfRow" name="shelfRow" type="number" min="0" placeholder="Row" value={editFormState.shelfRow} onChange={handleEditFormChange} />
+                                    <Input id="shelfColumn" name="shelfColumn" type="text" inputMode="numeric" pattern="[0-9]*" placeholder="Column" value={editFormState.shelfColumn} onChange={handleEditFormChange} />
+                                    <Input id="shelfRow" name="shelfRow" type="text" inputMode="numeric" pattern="[0-9]*" placeholder="Row" value={editFormState.shelfRow} onChange={handleEditFormChange} />
                                   </div>
                                 </div>
                             </div>
