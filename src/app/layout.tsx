@@ -7,6 +7,7 @@ import { ThemeProvider } from '@/components/ThemeProvider';
 export const metadata: Metadata = {
   title: 'ShelfScanner',
   description: 'An inventory management app for scanning barcodes and tracking items.',
+  manifest: '/manifest.json',
 };
 
 export default function RootLayout({
@@ -20,6 +21,7 @@ export default function RootLayout({
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;700&display=swap" rel="stylesheet" />
+        <meta name="theme-color" content="#ffffff" />
       </head>
       <body className="font-body antialiased">
         <ThemeProvider
