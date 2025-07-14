@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useEffect } from 'react';
@@ -202,73 +203,71 @@ export default function HomePage() {
       <div className="flex flex-col min-h-screen bg-background text-foreground">
         <Header onExportJson={handleExportJson} onExportTxt={handleExportTxt} listName={activeList.name} />
         <main className="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          {activeList.items.length > 0 && (
-            <div className="mb-6 text-center sm:text-left">
-              <DialogTrigger asChild>
-                <Button size="lg" className="bg-accent text-accent-foreground hover:bg-accent/90" onClick={() => setIsScannerOpen(true)}>
-                  <QrCode className="mr-2 h-5 w-5" />
-                  Scan New Item
-                </Button>
-              </DialogTrigger>
-            </div>
-          )}
+            <Dialog open={isScannerOpen} onOpenChange={setIsScannerOpen}>
+                <Dialog open={isManualAddOpen} onOpenChange={setIsManualAddOpen}>
+                    {activeList.items.length > 0 && (
+                        <div className="mb-6 text-center sm:text-left">
+                            <DialogTrigger asChild>
+                                <Button size="lg" className="bg-accent text-accent-foreground hover:bg-accent/90">
+                                    <QrCode className="mr-2 h-5 w-5" />
+                                    Scan New Item
+                                </Button>
+                            </DialogTrigger>
+                        </div>
+                    )}
 
-          {activeList.items.length === 0 ? (
-            <EmptyState onScan={() => setIsScannerOpen(true)} />
-          ) : (
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-              {activeList.items.map((item) => (
-                <InventoryItem
-                  key={item.id}
-                  item={item}
-                  onUpdate={handleUpdateItem}
-                  onDelete={handleDeleteItem}
-                />
-              ))}
-            </div>
-          )}
+                    {activeList.items.length === 0 ? (
+                        <EmptyState onScan={() => setIsScannerOpen(true)} />
+                    ) : (
+                        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                        {activeList.items.map((item) => (
+                            <InventoryItem
+                            key={item.id}
+                            item={item}
+                            onUpdate={handleUpdateItem}
+                            onDelete={handleDeleteItem}
+                            />
+                        ))}
+                        </div>
+                    )}
+                    <DialogContent className="sm:max-w-[425px]">
+                        <DialogHeader>
+                            <DialogTitle>Add Item Manually</DialogTitle>
+                        </DialogHeader>
+                        <form onSubmit={handleManualAddSubmit}>
+                            <div className="grid gap-4 py-4">
+                            <div className="grid grid-cols-4 items-center gap-4">
+                                <Label htmlFor="barcode" className="text-right">
+                                Barcode
+                                </Label>
+                                <Input
+                                id="barcode"
+                                value={manualBarcode}
+                                onChange={(e) => setManualBarcode(e.target.value)}
+                                className="col-span-3"
+                                placeholder="Enter barcode number"
+                                required
+                                />
+                            </div>
+                            </div>
+                            <DialogFooter>
+                            <DialogClose asChild>
+                                <Button type="button" variant="secondary">Cancel</Button>
+                            </DialogClose>
+                            <Button type="submit">Continue</Button>
+                            </DialogFooter>
+                        </form>
+                    </DialogContent>
+                </Dialog>
+                <DialogContent className="sm:max-w-[425px]">
+                <DialogHeader>
+                    <DialogTitle>Scan Barcode</DialogTitle>
+                </DialogHeader>
+                <BarcodeScanner onScan={handleScanned} onManualAdd={handleOpenManualAdd} />
+                </DialogContent>
+            </Dialog>
         </main>
       </div>
-
-      <Dialog open={isScannerOpen} onOpenChange={setIsScannerOpen}>
-        <DialogContent className="sm:max-w-[425px]">
-          <DialogHeader>
-            <DialogTitle>Scan Barcode</DialogTitle>
-          </DialogHeader>
-          <BarcodeScanner onScan={handleScanned} onManualAdd={handleOpenManualAdd} />
-        </DialogContent>
-      </Dialog>
-      
-      <Dialog open={isManualAddOpen} onOpenChange={setIsManualAddOpen}>
-        <DialogContent className="sm:max-w-[425px]">
-          <DialogHeader>
-            <DialogTitle>Add Item Manually</DialogTitle>
-          </DialogHeader>
-          <form onSubmit={handleManualAddSubmit}>
-            <div className="grid gap-4 py-4">
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="barcode" className="text-right">
-                  Barcode
-                </Label>
-                <Input
-                  id="barcode"
-                  value={manualBarcode}
-                  onChange={(e) => setManualBarcode(e.target.value)}
-                  className="col-span-3"
-                  placeholder="Enter barcode number"
-                  required
-                />
-              </div>
-            </div>
-            <DialogFooter>
-              <DialogClose asChild>
-                <Button type="button" variant="secondary">Cancel</Button>
-              </DialogClose>
-              <Button type="submit">Continue</Button>
-            </DialogFooter>
-          </form>
-        </DialogContent>
-      </Dialog>
 
       <Dialog open={isAddItemDetailOpen} onOpenChange={setIsAddItemDetailOpen}>
           <DialogContent>
