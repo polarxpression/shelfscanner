@@ -126,7 +126,7 @@ export default function HomePage() {
     setNewItemDetails(defaultItemState);
   };
 
-  const handleUpdateItem = (id: string, updates: Partial<Omit<InventoryItemType, 'id' | 'barcode'>>) => {
+  const handleUpdateItem = (id: string, updates: Partial<Omit<InventoryItemType, 'id'>>) => {
     if (!activeList) return;
     const updatedLists = lists.map(list => {
         if (list.id === activeListId) {
