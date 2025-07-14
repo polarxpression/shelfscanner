@@ -1,5 +1,13 @@
 import { QrCode, PackageSearch } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
+
 
 interface EmptyStateProps {
   onScan: () => void;
@@ -16,10 +24,10 @@ export function EmptyState({ onScan }: EmptyStateProps) {
         Get started by scanning your first item's barcode to add it to your inventory.
       </p>
       <div className="mt-6">
-        <Button onClick={onScan} size="lg" className="bg-accent text-accent-foreground hover:bg-accent/90">
-          <QrCode className="mr-2 h-5 w-5" />
-          Scan First Item
-        </Button>
+          <Button onClick={onScan} size="lg" className="bg-accent text-accent-foreground hover:bg-accent/90">
+            <QrCode className="mr-2 h-5 w-5" />
+            Scan First Item
+          </Button>
       </div>
     </div>
   );
