@@ -9,7 +9,7 @@ import { InventoryItem } from '@/components/InventoryItem';
 import { EmptyState } from '@/components/EmptyState';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { QrCode, BookType, Plus } from 'lucide-react';
+import { QrCode, BookType } from 'lucide-react';
 import { useToast } from "@/hooks/use-toast"
 import { BarcodeScanner } from '@/components/BarcodeScanner';
 import {
@@ -33,7 +33,7 @@ const defaultItemState = {
 };
 
 export default function HomePage() {
-  const { lists, setLists, activeListId, setActiveListId } = useSidebar();
+  const { lists, setLists, activeListId } = useSidebar();
   const [isScannerOpen, setIsScannerOpen] = useState(false);
   const [isManualAddOpen, setIsManualAddOpen] = useState(false);
   const [isAddItemDetailOpen, setIsAddItemDetailOpen] = useState(false);
@@ -118,7 +118,7 @@ export default function HomePage() {
 
     toast({
       title: "Item Added",
-      description: `Item with barcode ${newItem.barcode} has been added.`,
+      description: `${newItem.name || 'Item'} with barcode ${newItem.barcode} has been added.`,
     });
     
     setIsAddItemDetailOpen(false);
@@ -155,16 +155,40 @@ export default function HomePage() {
     });
   };
 
-  const downloadFile = (filename: string, content: string, type: string) => {
+  const shareOrDownloadFile = async (filename: string, content: string, type: string) => {
     const blob = new Blob([content], { type });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = filename;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
+    const file = new File([blob], filename, { type });
+    
+    if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
+      try {
+        await navigator.share({
+          files: [file],
+          title: `Export: ${activeList?.name || 'Inventory'}`,
+          text: `Inventory data for ${activeList?.name || 'list'}.`
+        });
+        toast({ title: "Shared successfully" });
+      } catch (error) {
+        // This can happen if the user cancels the share dialog
+        if ((error as Error).name !== 'AbortError') {
+          toast({
+            title: "Share Failed",
+            description: "Could not share the file. Please try downloading instead.",
+            variant: "destructive"
+          });
+        }
+      }
+    } else {
+      // Fallback to download
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      toast({ title: "Download started", description: `${filename} has been downloaded.` });
+    }
   };
 
   const handleExportJson = () => {
@@ -184,8 +208,7 @@ export default function HomePage() {
     }, {} as Record<string, { barcode: string }[]>);
 
     const jsonContent = JSON.stringify(dataToExport, null, 2);
-    downloadFile(`${activeList.name}_inventory.json`, jsonContent, 'application/json');
-    toast({ title: "Export Successful", description: "Inventory JSON has been downloaded." });
+    shareOrDownloadFile(`${activeList.name}_inventory.json`, jsonContent, 'application/json');
   };
 
   const handleExportTxt = () => {
@@ -196,8 +219,7 @@ export default function HomePage() {
     const txtContent = activeList.items
       .map(({ barcode, quantity }) => `${barcode},${quantity}`)
       .join('\n');
-    downloadFile(`${activeList.name}_inventory.txt`, txtContent, 'text/plain');
-    toast({ title: "Export Successful", description: "Inventory TXT has been downloaded." });
+    shareOrDownloadFile(`${activeList.name}_inventory.txt`, txtContent, 'text/plain');
   };
   
   if (!mounted) {
@@ -224,68 +246,69 @@ export default function HomePage() {
       <div className="flex flex-col min-h-screen bg-background text-foreground">
         <Header onExportJson={handleExportJson} onExportTxt={handleExportTxt} listName={activeList.name} />
         <main className="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 py-8">
-            <Dialog open={isScannerOpen} onOpenChange={setIsScannerOpen}>
-                <Dialog open={isManualAddOpen} onOpenChange={setIsManualAddOpen}>
-                    <DialogTrigger asChild>
-                        {activeList.items.length > 0 && (
-                            <div className="fixed bottom-8 right-8 z-20">
-                                <Button size="lg" className="rounded-full h-16 w-16 shadow-lg bg-accent text-accent-foreground hover:bg-accent/90" onClick={() => setIsScannerOpen(true)}>
-                                    <QrCode className="h-8 w-8" />
-                                </Button>
-                            </div>
-                        )}
-                    </DialogTrigger>
+          <Dialog open={isScannerOpen} onOpenChange={setIsScannerOpen}>
+            <Dialog open={isManualAddOpen} onOpenChange={setIsManualAddOpen}>
+              <DialogTrigger asChild>
+                {activeList.items.length > 0 ? (
+                  <div className="fixed bottom-8 right-8 z-20">
+                    <Button size="lg" className="rounded-full h-16 w-16 shadow-lg !bg-primary text-primary-foreground hover:!bg-primary/90" onClick={() => setIsScannerOpen(true)}>
+                      <QrCode className="h-8 w-8" />
+                    </Button>
+                  </div>
+                ) : <div />}
+              </DialogTrigger>
 
-                    {activeList.items.length === 0 ? (
-                        <EmptyState onScan={() => setIsScannerOpen(true)} />
-                    ) : (
-                        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-                        {activeList.items.map((item) => (
-                            <InventoryItem
-                            key={item.id}
-                            item={item}
-                            onUpdate={handleUpdateItem}
-                            onDelete={handleDeleteItem}
-                            />
-                        ))}
-                        </div>
-                    )}
-                    <DialogContent className="sm:max-w-[425px]">
-                        <DialogHeader>
-                            <DialogTitle>Add Item Manually</DialogTitle>
-                        </DialogHeader>
-                        <form onSubmit={handleManualAddSubmit}>
-                            <div className="grid gap-4 py-4">
-                            <div className="grid grid-cols-4 items-center gap-4">
-                                <Label htmlFor="barcode" className="text-right">
-                                Barcode
-                                </Label>
-                                <Input
-                                id="barcode"
-                                value={manualBarcode}
-                                onChange={(e) => setManualBarcode(e.target.value)}
-                                className="col-span-3"
-                                placeholder="Enter barcode number"
-                                required
-                                />
-                            </div>
-                            </div>
-                            <DialogFooter>
-                            <DialogClose asChild>
-                                <Button type="button" variant="secondary">Cancel</Button>
-                            </DialogClose>
-                            <Button type="submit">Continue</Button>
-                            </DialogFooter>
-                        </form>
-                    </DialogContent>
-                </Dialog>
-                <DialogContent className="sm:max-w-[425px]">
+              {activeList.items.length === 0 ? (
+                <EmptyState onScan={() => setIsScannerOpen(true)} />
+              ) : (
+                <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                  {activeList.items.map((item) => (
+                    <InventoryItem
+                      key={item.id}
+                      item={item}
+                      onUpdate={handleUpdateItem}
+                      onDelete={handleDeleteItem}
+                    />
+                  ))}
+                </div>
+              )}
+
+              <DialogContent className="sm:max-w-[425px]">
                 <DialogHeader>
-                    <DialogTitle>Scan Barcode</DialogTitle>
+                  <DialogTitle>Add Item Manually</DialogTitle>
                 </DialogHeader>
-                <BarcodeScanner onScan={handleScanned} onManualAdd={handleOpenManualAdd} />
-                </DialogContent>
+                <form onSubmit={handleManualAddSubmit}>
+                  <div className="grid gap-4 py-4">
+                    <div className="grid grid-cols-4 items-center gap-4">
+                      <Label htmlFor="barcode" className="text-right">
+                        Barcode
+                      </Label>
+                      <Input
+                        id="barcode"
+                        value={manualBarcode}
+                        onChange={(e) => setManualBarcode(e.target.value)}
+                        className="col-span-3"
+                        placeholder="Enter barcode number"
+                        required
+                      />
+                    </div>
+                  </div>
+                  <DialogFooter>
+                    <DialogClose asChild>
+                      <Button type="button" variant="secondary">Cancel</Button>
+                    </DialogClose>
+                    <Button type="submit">Continue</Button>
+                  </DialogFooter>
+                </form>
+              </DialogContent>
             </Dialog>
+            <DialogContent className="sm:max-w-[425px]">
+              <DialogHeader>
+                <DialogTitle>Scan Barcode</DialogTitle>
+              </DialogHeader>
+              <BarcodeScanner onScan={handleScanned} onManualAdd={handleOpenManualAdd} />
+            </DialogContent>
+          </Dialog>
         </main>
       </div>
 
