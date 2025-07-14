@@ -16,7 +16,7 @@ import { Label } from "@/components/ui/label";
 import { Plus, Trash2, X, FileText, Sun, Moon } from 'lucide-react';
 import { useSidebar } from './SidebarProvider';
 import { cn } from '@/lib/utils';
-import { useTranslation } from '@/hooks/use-translation.tsx';
+import { useTranslation } from '@/hooks/use-translation';
 
 export function AppSidebar() {
   const { t } = useTranslation();
@@ -61,7 +61,7 @@ export function AppSidebar() {
 
   const desktopContent = (
     <div className="flex flex-col h-full bg-card">
-      <div className="flex items-center justify-between p-4 border-b">
+      <div className="flex items-center justify-between p-4 mb-2 border-b">
           <h2 className="text-xl font-bold text-primary">ShelfScanner</h2>
       </div>
       <div className="flex-grow p-2 overflow-y-auto">
@@ -132,11 +132,10 @@ export function AppSidebar() {
   
   const mobileContent = (
     <div className="flex flex-col h-full bg-card">
-       <SheetHeader className="p-4 border-b flex flex-row items-center justify-between">
+       <SheetHeader className="p-4 border-b flex flex-row content-center justify-between">
           <SheetTitle className="text-xl font-bold text-primary">ShelfScanner</SheetTitle>
           <SheetClose>
             <X className="h-5 w-5" />
-            <span className="sr-only">{t('close')}</span>
           </SheetClose>
         </SheetHeader>
       <div className="flex-grow p-2 overflow-y-auto">

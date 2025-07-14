@@ -6,7 +6,7 @@ import { useToast } from "@/hooks/use-toast";
 import { AlertTitle, AlertDescription } from '@/components/ui/alert';
 import { Button } from './ui/button';
 import { RefreshCw, ZapOff } from 'lucide-react';
-import { useTranslation } from '@/hooks/use-translation.tsx';
+import { useTranslation } from '@/hooks/use-translation';
 
 interface BarcodeScannerProps {
   onScan: (barcode: string) => void;
