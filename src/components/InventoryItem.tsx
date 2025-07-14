@@ -1,12 +1,12 @@
 
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import type { InventoryItem } from '@/types';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { MinusCircle, PlusCircle, Trash2, Barcode, Edit } from 'lucide-react';
+import { MinusCircle, PlusCircle, Trash2, Barcode, Edit, MapPin } from 'lucide-react';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import {
@@ -25,14 +25,35 @@ interface InventoryItemProps {
   onDelete: (id: string) => void;
 }
 
+interface EditFormState {
+    name: string;
+    description: string;
+    quantity: number;
+    shelfColumn: string;
+    shelfRow: string;
+}
+
 export function InventoryItem({ item, onUpdate, onDelete }: InventoryItemProps) {
   const [isEditOpen, setIsEditOpen] = useState(false);
-  const [editFormState, setEditFormState] = useState<Omit<InventoryItem, 'id' | 'barcode'>>({
+  const [editFormState, setEditFormState] = useState<EditFormState>({
     name: item.name,
     description: item.description,
     quantity: item.quantity,
-    shelfPosition: item.shelfPosition,
+    shelfColumn: '',
+    shelfRow: '',
   });
+
+  useEffect(() => {
+    const [col, row] = item.shelfPosition.split('-');
+    setEditFormState({
+        name: item.name,
+        description: item.description,
+        quantity: item.quantity,
+        shelfColumn: col || '',
+        shelfRow: row || '',
+    })
+  }, [item]);
+
 
   const handleQuantityChange = (change: number) => {
     const newQuantity = Math.max(0, item.quantity + change);
@@ -45,22 +66,32 @@ export function InventoryItem({ item, onUpdate, onDelete }: InventoryItemProps) 
 
   const handleEditSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    const shelfPosition = editFormState.shelfColumn && editFormState.shelfRow
+        ? `${editFormState.shelfColumn}-${editFormState.shelfRow}`
+        : '';
+        
     onUpdate(item.id, {
-      ...editFormState,
+      name: editFormState.name,
+      description: editFormState.description,
       quantity: Number(editFormState.quantity) || 0,
+      shelfPosition: shelfPosition,
     });
     setIsEditOpen(false);
   };
   
   const openEditDialog = () => {
+    const [col, row] = item.shelfPosition.split('-');
     setEditFormState({
         name: item.name,
         description: item.description,
         quantity: item.quantity,
-        shelfPosition: item.shelfPosition,
+        shelfColumn: col || '',
+        shelfRow: row || '',
     });
     setIsEditOpen(true);
   }
+
+  const [col, row] = item.shelfPosition.split('-');
 
   return (
     <Card className="overflow-hidden transition-shadow hover:shadow-lg flex flex-col">
@@ -99,11 +130,14 @@ export function InventoryItem({ item, onUpdate, onDelete }: InventoryItemProps) 
                                 </div>
                                 <div className="space-y-2">
                                     <Label htmlFor="quantity">Quantity</Label>
-                                    <Input id="quantity" name="quantity" type="number" value={editFormState.quantity} onChange={handleEditFormChange} required />
+                                    <Input id="quantity" name="quantity" type="number" min="0" value={editFormState.quantity} onChange={handleEditFormChange} required />
                                 </div>
                                 <div className="space-y-2">
-                                    <Label htmlFor="shelfPosition">Shelf Position (Optional)</Label>
-                                    <Input id="shelfPosition" name="shelfPosition" value={editFormState.shelfPosition} onChange={handleEditFormChange} />
+                                  <Label>Shelf Position (Optional)</Label>
+                                  <div className="flex gap-2">
+                                    <Input id="shelfColumn" name="shelfColumn" type="number" min="0" placeholder="Column" value={editFormState.shelfColumn} onChange={handleEditFormChange} />
+                                    <Input id="shelfRow" name="shelfRow" type="number" min="0" placeholder="Row" value={editFormState.shelfRow} onChange={handleEditFormChange} />
+                                  </div>
                                 </div>
                             </div>
                             <DialogFooter>
@@ -128,6 +162,12 @@ export function InventoryItem({ item, onUpdate, onDelete }: InventoryItemProps) 
         </div>
         <CardTitle className="mt-2 text-lg">{item.name || 'Unnamed Item'}</CardTitle>
         <CardDescription>{item.description}</CardDescription>
+        {item.shelfPosition && (
+          <div className="text-sm text-muted-foreground mt-2 flex items-center">
+            <MapPin className="mr-1.5 h-4 w-4" />
+            Column: {col}, Row: {row}
+          </div>
+        )}
       </CardHeader>
       <CardContent className="p-4 sm:p-6 pt-0 flex-grow flex flex-col justify-end">
          <div className="grid grid-cols-1 gap-4">
@@ -157,14 +197,23 @@ export function InventoryItem({ item, onUpdate, onDelete }: InventoryItemProps) 
             </div>
           </div>
           <div className="space-y-2">
-            <Label htmlFor={`shelf-${item.id}`}>Shelf Position</Label>
-            <Input
-              id={`shelf-${item.id}`}
-              type="text"
-              placeholder="e.g., Aisle 5, Shelf 3"
-              value={item.shelfPosition}
-              onChange={(e) => onUpdate(item.id, { shelfPosition: e.target.value })}
-            />
+            <Label>Shelf Position</Label>
+            <div className="flex items-center gap-2">
+                <Input
+                type="number"
+                min="0"
+                placeholder="Col"
+                value={col || ''}
+                onChange={(e) => onUpdate(item.id, { shelfPosition: `${e.target.value}-${row || ''}` })}
+                />
+                <Input
+                type="number"
+                min="0"
+                placeholder="Row"
+                value={row || ''}
+                onChange={(e) => onUpdate(item.id, { shelfPosition: `${col || ''}-${e.target.value}` })}
+                />
+            </div>
           </div>
         </div>
       </CardContent>

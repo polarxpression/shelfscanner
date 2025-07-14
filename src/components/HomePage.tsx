@@ -28,7 +28,8 @@ const defaultItemState = {
     name: '',
     description: '',
     quantity: 1,
-    shelfPosition: '',
+    shelfColumn: '',
+    shelfRow: '',
 };
 
 export default function HomePage() {
@@ -39,7 +40,7 @@ export default function HomePage() {
   
   const [manualBarcode, setManualBarcode] = useState('');
   const [newItemBarcode, setNewItemBarcode] = useState('');
-  const [newItemDetails, setNewItemDetails] = useState<Omit<InventoryItemType, 'id' | 'barcode'>>(defaultItemState);
+  const [newItemDetails, setNewItemDetails] = useState(defaultItemState);
 
   const { toast } = useToast();
 
@@ -87,12 +88,17 @@ export default function HomePage() {
       toast({ title: "No list selected", description: "Please create or select a list first.", variant: "destructive" });
       return;
     }
+    const shelfPosition = newItemDetails.shelfColumn && newItemDetails.shelfRow
+        ? `${newItemDetails.shelfColumn}-${newItemDetails.shelfRow}`
+        : '';
 
     const newItem: InventoryItemType = {
       id: crypto.randomUUID(),
       barcode: newItemBarcode,
-      ...newItemDetails,
+      name: newItemDetails.name,
+      description: newItemDetails.description,
       quantity: Number(newItemDetails.quantity) || 0,
+      shelfPosition: shelfPosition,
     };
     
     const updatedLists = lists.map(list => {
@@ -294,11 +300,14 @@ export default function HomePage() {
                       </div>
                       <div className="space-y-2">
                           <Label htmlFor="quantity">Quantity</Label>
-                          <Input id="quantity" name="quantity" type="number" value={newItemDetails.quantity} onChange={handleNewItemDetailChange} required />
+                          <Input id="quantity" name="quantity" type="number" min="0" value={newItemDetails.quantity} onChange={handleNewItemDetailChange} required />
                       </div>
                       <div className="space-y-2">
-                          <Label htmlFor="shelfPosition">Shelf Position (Optional)</Label>
-                          <Input id="shelfPosition" name="shelfPosition" value={newItemDetails.shelfPosition} onChange={handleNewItemDetailChange} />
+                          <Label>Shelf Position (Optional)</Label>
+                          <div className="flex gap-2">
+                            <Input id="shelfColumn" name="shelfColumn" type="number" min="0" placeholder="Column" value={newItemDetails.shelfColumn} onChange={handleNewItemDetailChange} />
+                            <Input id="shelfRow" name="shelfRow" type="number" min="0" placeholder="Row" value={newItemDetails.shelfRow} onChange={handleNewItemDetailChange} />
+                          </div>
                       </div>
                   </div>
                   <DialogFooter>
