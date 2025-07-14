@@ -187,7 +187,7 @@ export default function HomePage() {
       return;
     }
     const txtContent = activeList.items
-      .map(({ barcode, quantity, name }) => `${barcode} - ${name || 'Unnamed Item'}: ${quantity}`)
+      .map(({ barcode, quantity }) => `${barcode},${quantity}`)
       .join('\n');
     downloadFile(`${activeList.name}_inventory.txt`, txtContent, 'text/plain');
     toast({ title: "Export Successful", description: "Inventory TXT has been downloaded." });
