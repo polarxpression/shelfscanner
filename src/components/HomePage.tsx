@@ -159,14 +159,18 @@ export default function HomePage() {
       toast({ title: "Nothing to export", description: "Your inventory is empty.", variant: "destructive" });
       return;
     }
-    const dataToExport = activeList.items.map(({ barcode, shelfPosition, quantity, name, description }) => ({
-      barcode,
-      shelfPosition,
-      quantity,
-      name,
-      description
-    }));
-    const jsonContent = JSON.stringify(dataToExport, null, 2);
+    const dataToExport = activeList.items.reduce((acc, item) => {
+      const position = item.shelfPosition || "unassigned";
+      if (!acc[position]) {
+        acc[position] = [];
+      }
+      for (let i = 0; i < item.quantity; i++) {
+        acc[position].push({ barcode: item.barcode });
+      }
+      return acc;
+    }, {} as Record<string, { barcode: string }[]>);
+
+    const jsonContent = JSON.stringify(dataToExport, null, 4);
     downloadFile(`${activeList.name}_inventory.json`, jsonContent, 'application/json');
     toast({ title: "Export Successful", description: "Inventory JSON has been downloaded." });
   };
