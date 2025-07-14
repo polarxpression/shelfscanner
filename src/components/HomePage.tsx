@@ -21,23 +21,36 @@ import {
   DialogClose,
 } from "@/components/ui/dialog"
 import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+
+const defaultItemState = {
+    name: '',
+    description: '',
+    quantity: 1,
+    shelfPosition: '',
+};
 
 export default function HomePage() {
   const { lists, setLists, activeListId, setActiveListId } = useSidebar();
   const [isScannerOpen, setIsScannerOpen] = useState(false);
   const [isManualAddOpen, setIsManualAddOpen] = useState(false);
+  const [isAddItemDetailOpen, setIsAddItemDetailOpen] = useState(false);
+  
   const [manualBarcode, setManualBarcode] = useState('');
+  const [newItemBarcode, setNewItemBarcode] = useState('');
+  const [newItemDetails, setNewItemDetails] = useState<Omit<InventoryItemType, 'id' | 'barcode'>>(defaultItemState);
+
   const { toast } = useToast();
 
   const activeList = lists.find(l => l.id === activeListId);
 
-  const handleAddItem = (barcode: string) => {
+  const handleScanned = (barcode: string) => {
     if (!activeList) {
       toast({ title: "No list selected", description: "Please create or select a list first.", variant: "destructive" });
+      setIsScannerOpen(false);
       return;
     }
-
-    if (!barcode) {
+     if (!barcode) {
       toast({
         title: "Invalid Barcode",
         description: "The scanned or entered barcode is empty.",
@@ -45,14 +58,40 @@ export default function HomePage() {
       });
       return;
     }
+    setNewItemBarcode(barcode);
+    setNewItemDetails({ ...defaultItemState, name: `Product ${barcode.slice(-4)}` });
+    setIsScannerOpen(false);
+    setIsAddItemDetailOpen(true);
+  };
+  
+  const handleOpenManualAdd = () => {
+    setIsScannerOpen(false); 
+    setIsManualAddOpen(true);
+  }
+
+  const handleManualAddSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsManualAddOpen(false);
+    handleScanned(manualBarcode);
+    setManualBarcode('');
+  }
+
+  const handleNewItemDetailChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    setNewItemDetails({ ...newItemDetails, [e.target.name]: e.target.value });
+  };
+  
+  const handleNewItemSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+     if (!activeList) {
+      toast({ title: "No list selected", description: "Please create or select a list first.", variant: "destructive" });
+      return;
+    }
 
     const newItem: InventoryItemType = {
       id: crypto.randomUUID(),
-      barcode: barcode,
-      quantity: 1,
-      shelfPosition: '',
-      name: `Product ${barcode.slice(-4)}`,
-      description: 'A brief description of the product can go here.'
+      barcode: newItemBarcode,
+      ...newItemDetails,
+      quantity: Number(newItemDetails.quantity) || 0,
     };
     
     const updatedLists = lists.map(list => {
@@ -65,22 +104,13 @@ export default function HomePage() {
 
     toast({
       title: "Item Added",
-      description: `Scanned barcode: ${barcode}`,
+      description: `Item ${newItem.name} with barcode ${newItem.barcode} has been added.`,
     });
-    setIsScannerOpen(false);
-    setIsManualAddOpen(false);
-    setManualBarcode('');
+    
+    setIsAddItemDetailOpen(false);
+    setNewItemBarcode('');
+    setNewItemDetails(defaultItemState);
   };
-  
-  const handleOpenManualAdd = () => {
-    setIsScannerOpen(false); 
-    setIsManualAddOpen(true);
-  }
-
-  const handleManualAddSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    handleAddItem(manualBarcode);
-  }
 
   const handleUpdateItem = (id: string, updates: Partial<Omit<InventoryItemType, 'id' | 'barcode'>>) => {
     if (!activeList) return;
@@ -169,45 +199,46 @@ export default function HomePage() {
 
   return (
     <>
-      <Dialog open={isScannerOpen} onOpenChange={setIsScannerOpen}>
-        <div className="flex flex-col min-h-screen bg-background text-foreground">
-          <Header onExportJson={handleExportJson} onExportTxt={handleExportTxt} listName={activeList.name} />
-          <main className="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 py-8">
-            {activeList.items.length > 0 && (
-              <div className="mb-6 text-center sm:text-left">
-                <DialogTrigger asChild>
-                  <Button size="lg" className="bg-accent text-accent-foreground hover:bg-accent/90">
-                    <QrCode className="mr-2 h-5 w-5" />
-                    Scan New Item
-                  </Button>
-                </DialogTrigger>
-              </div>
-            )}
+      <div className="flex flex-col min-h-screen bg-background text-foreground">
+        <Header onExportJson={handleExportJson} onExportTxt={handleExportTxt} listName={activeList.name} />
+        <main className="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          {activeList.items.length > 0 && (
+            <div className="mb-6 text-center sm:text-left">
+              <DialogTrigger asChild>
+                <Button size="lg" className="bg-accent text-accent-foreground hover:bg-accent/90" onClick={() => setIsScannerOpen(true)}>
+                  <QrCode className="mr-2 h-5 w-5" />
+                  Scan New Item
+                </Button>
+              </DialogTrigger>
+            </div>
+          )}
 
-            {activeList.items.length === 0 ? (
-              <EmptyState onScan={() => setIsScannerOpen(true)} />
-            ) : (
-              <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-                {activeList.items.map((item) => (
-                  <InventoryItem
-                    key={item.id}
-                    item={item}
-                    onUpdate={handleUpdateItem}
-                    onDelete={handleDeleteItem}
-                  />
-                ))}
-              </div>
-            )}
-          </main>
-        </div>
+          {activeList.items.length === 0 ? (
+            <EmptyState onScan={() => setIsScannerOpen(true)} />
+          ) : (
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+              {activeList.items.map((item) => (
+                <InventoryItem
+                  key={item.id}
+                  item={item}
+                  onUpdate={handleUpdateItem}
+                  onDelete={handleDeleteItem}
+                />
+              ))}
+            </div>
+          )}
+        </main>
+      </div>
+
+      <Dialog open={isScannerOpen} onOpenChange={setIsScannerOpen}>
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
             <DialogTitle>Scan Barcode</DialogTitle>
           </DialogHeader>
-          <BarcodeScanner onScan={handleAddItem} onManualAdd={handleOpenManualAdd} />
+          <BarcodeScanner onScan={handleScanned} onManualAdd={handleOpenManualAdd} />
         </DialogContent>
       </Dialog>
-
+      
       <Dialog open={isManualAddOpen} onOpenChange={setIsManualAddOpen}>
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
@@ -233,10 +264,48 @@ export default function HomePage() {
               <DialogClose asChild>
                 <Button type="button" variant="secondary">Cancel</Button>
               </DialogClose>
-              <Button type="submit">Add Item</Button>
+              <Button type="submit">Continue</Button>
             </DialogFooter>
           </form>
         </DialogContent>
+      </Dialog>
+
+      <Dialog open={isAddItemDetailOpen} onOpenChange={setIsAddItemDetailOpen}>
+          <DialogContent>
+              <DialogHeader>
+                  <DialogTitle>Add New Item Details</DialogTitle>
+              </DialogHeader>
+              <form onSubmit={handleNewItemSubmit}>
+                  <div className="grid gap-4 py-4">
+                      <div className="space-y-2">
+                          <Label>Barcode</Label>
+                          <Input value={newItemBarcode} disabled />
+                      </div>
+                      <div className="space-y-2">
+                          <Label htmlFor="name">Name</Label>
+                          <Input id="name" name="name" value={newItemDetails.name} onChange={handleNewItemDetailChange} required/>
+                      </div>
+                      <div className="space-y-2">
+                          <Label htmlFor="description">Description</Label>
+                          <Textarea id="description" name="description" value={newItemDetails.description} onChange={handleNewItemDetailChange} />
+                      </div>
+                      <div className="space-y-2">
+                          <Label htmlFor="quantity">Quantity</Label>
+                          <Input id="quantity" name="quantity" type="number" value={newItemDetails.quantity} onChange={handleNewItemDetailChange} required />
+                      </div>
+                      <div className="space-y-2">
+                          <Label htmlFor="shelfPosition">Shelf Position</Label>
+                          <Input id="shelfPosition" name="shelfPosition" value={newItemDetails.shelfPosition} onChange={handleNewItemDetailChange} />
+                      </div>
+                  </div>
+                  <DialogFooter>
+                      <DialogClose asChild>
+                          <Button type="button" variant="secondary">Cancel</Button>
+                      </DialogClose>
+                      <Button type="submit">Add Item</Button>
+                  </DialogFooter>
+              </form>
+          </DialogContent>
       </Dialog>
     </>
   );
