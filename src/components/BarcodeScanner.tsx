@@ -105,7 +105,7 @@ export function BarcodeScanner({ onScan, onManualAdd }: BarcodeScannerProps) {
             <AlertDescription className="text-white mb-6">
               {t('cameraErrorDescription')}
             </AlertDescription>
-            <div className="flex flex-col sm:flex-row gap-2 w-full max-w-xs">
+            <div className="flex flex-col gap-2 w-full max-w-xs">
                 <Button onClick={handleRetry} variant="secondary" className="w-full">
                     <RefreshCw className="mr-2 h-4 w-4" />
                     {t('retry')}
