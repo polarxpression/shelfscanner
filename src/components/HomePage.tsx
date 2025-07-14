@@ -105,7 +105,7 @@ export default function HomePage() {
 
     toast({
       title: "Item Added",
-      description: `Item ${newItem.name} with barcode ${newItem.barcode} has been added.`,
+      description: `Item with barcode ${newItem.barcode} has been added.`,
     });
     
     setIsAddItemDetailOpen(false);
@@ -177,7 +177,7 @@ export default function HomePage() {
       return;
     }
     const txtContent = activeList.items
-      .map(({ barcode, quantity, name }) => `${barcode} - ${name}: ${quantity}`)
+      .map(({ barcode, quantity, name }) => `${barcode} - ${name || 'Unnamed Item'}: ${quantity}`)
       .join('\n');
     downloadFile(`${activeList.name}_inventory.txt`, txtContent, 'text/plain');
     toast({ title: "Export Successful", description: "Inventory TXT has been downloaded." });
@@ -281,11 +281,11 @@ export default function HomePage() {
                           <Input value={newItemBarcode} disabled />
                       </div>
                       <div className="space-y-2">
-                          <Label htmlFor="name">Name</Label>
-                          <Input id="name" name="name" value={newItemDetails.name} onChange={handleNewItemDetailChange} required/>
+                          <Label htmlFor="name">Name (Optional)</Label>
+                          <Input id="name" name="name" value={newItemDetails.name} onChange={handleNewItemDetailChange} />
                       </div>
                       <div className="space-y-2">
-                          <Label htmlFor="description">Description</Label>
+                          <Label htmlFor="description">Description (Optional)</Label>
                           <Textarea id="description" name="description" value={newItemDetails.description} onChange={handleNewItemDetailChange} />
                       </div>
                       <div className="space-y-2">
@@ -293,7 +293,7 @@ export default function HomePage() {
                           <Input id="quantity" name="quantity" type="number" value={newItemDetails.quantity} onChange={handleNewItemDetailChange} required />
                       </div>
                       <div className="space-y-2">
-                          <Label htmlFor="shelfPosition">Shelf Position</Label>
+                          <Label htmlFor="shelfPosition">Shelf Position (Optional)</Label>
                           <Input id="shelfPosition" name="shelfPosition" value={newItemDetails.shelfPosition} onChange={handleNewItemDetailChange} />
                       </div>
                   </div>

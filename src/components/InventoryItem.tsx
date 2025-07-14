@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState } from 'react';
@@ -89,19 +90,19 @@ export function InventoryItem({ item, onUpdate, onDelete }: InventoryItemProps) 
                         <form onSubmit={handleEditSubmit}>
                             <div className="grid gap-4 py-4">
                                <div className="space-y-2">
-                                    <Label htmlFor="name">Name</Label>
+                                    <Label htmlFor="name">Name (Optional)</Label>
                                     <Input id="name" name="name" value={editFormState.name} onChange={handleEditFormChange} />
                                 </div>
                                 <div className="space-y-2">
-                                    <Label htmlFor="description">Description</Label>
+                                    <Label htmlFor="description">Description (Optional)</Label>
                                     <Textarea id="description" name="description" value={editFormState.description} onChange={handleEditFormChange} />
                                 </div>
                                 <div className="space-y-2">
                                     <Label htmlFor="quantity">Quantity</Label>
-                                    <Input id="quantity" name="quantity" type="number" value={editFormState.quantity} onChange={handleEditFormChange} />
+                                    <Input id="quantity" name="quantity" type="number" value={editFormState.quantity} onChange={handleEditFormChange} required />
                                 </div>
                                 <div className="space-y-2">
-                                    <Label htmlFor="shelfPosition">Shelf Position</Label>
+                                    <Label htmlFor="shelfPosition">Shelf Position (Optional)</Label>
                                     <Input id="shelfPosition" name="shelfPosition" value={editFormState.shelfPosition} onChange={handleEditFormChange} />
                                 </div>
                             </div>
@@ -125,7 +126,7 @@ export function InventoryItem({ item, onUpdate, onDelete }: InventoryItemProps) 
                 </Button>
             </div>
         </div>
-        <CardTitle className="mt-2 text-lg">{item.name}</CardTitle>
+        <CardTitle className="mt-2 text-lg">{item.name || 'Unnamed Item'}</CardTitle>
         <CardDescription>{item.description}</CardDescription>
       </CardHeader>
       <CardContent className="p-4 sm:p-6 pt-0 flex-grow flex flex-col justify-end">
