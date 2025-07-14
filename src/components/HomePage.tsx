@@ -158,6 +158,19 @@ export default function HomePage() {
     });
   };
 
+  const downloadFile = (filename: string, content: string, type: string) => {
+    const blob = new Blob([content], { type });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    toast({ title: t('downloadStartedTitle'), description: t('downloadStartedDescription', { filename }) });
+  }
+
   const shareOrDownloadFile = async (filename: string, content: string, type: string) => {
     const blob = new Blob([content], { type });
     const file = new File([blob], filename, { type });
@@ -171,26 +184,13 @@ export default function HomePage() {
         });
         toast({ title: t('sharedSuccessfully') });
       } catch (error) {
-        // This can happen if the user cancels the share dialog
+        console.error('Share failed:', error);
         if ((error as Error).name !== 'AbortError') {
-          toast({
-            title: t('shareFailedTitle'),
-            description: t('shareFailedDescription'),
-            variant: "destructive"
-          });
+          downloadFile(filename, content, type);
         }
       }
     } else {
-      // Fallback to download
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = filename;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
-      toast({ title: t('downloadStartedTitle'), description: t('downloadStartedDescription', { filename }) });
+      downloadFile(filename, content, type);
     }
   };
 
