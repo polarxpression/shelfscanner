@@ -121,13 +121,22 @@ export function AppSidebar() {
                 ) : (
                   <Moon className="mr-2 h-4 w-4" />
                 )}
+                <span className="ml-2">{theme === 'dark' ? 'Light Mode' : 'Dark Mode'}</span>
               </>
             )}
-            <span className="ml-2">{theme === 'dark' ? 'Light Mode' : 'Dark Mode'}</span>
+            {!mounted && <div className="h-4 w-4 mr-2" />}
           </Button>
         </div>
     </div>
   );
+  
+  if (!mounted) {
+    return (
+      <aside className="w-64 border-r md:block hidden shadow-md">
+        {/* Skeleton loader or empty state */}
+      </aside>
+    );
+  }
 
   if (isMobile) {
     return (

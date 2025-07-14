@@ -42,6 +42,11 @@ export default function HomePage() {
   const [newItemBarcode, setNewItemBarcode] = useState('');
   const [newItemDetails, setNewItemDetails] = useState(defaultItemState);
 
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   const { toast } = useToast();
 
   const activeList = lists.find(l => l.id === activeListId);
@@ -192,6 +197,10 @@ export default function HomePage() {
     downloadFile(`${activeList.name}_inventory.txt`, txtContent, 'text/plain');
     toast({ title: "Export Successful", description: "Inventory TXT has been downloaded." });
   };
+  
+  if (!mounted) {
+    return null; // Or a loading spinner
+  }
 
   if (!activeList) {
     return (
@@ -215,15 +224,15 @@ export default function HomePage() {
         <main className="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 py-8">
             <Dialog open={isScannerOpen} onOpenChange={setIsScannerOpen}>
                 <Dialog open={isManualAddOpen} onOpenChange={setIsManualAddOpen}>
-                    {activeList.items.length > 0 && (
-                        <div className="fixed bottom-8 right-8 z-20">
-                            <DialogTrigger asChild>
-                                <Button size="lg" className="rounded-full h-16 w-16 shadow-lg bg-accent text-accent-foreground hover:bg-accent/90">
-                                    <Plus className="h-8 w-8" />
+                    <DialogTrigger asChild>
+                        {activeList.items.length > 0 && (
+                            <div className="fixed bottom-8 right-8 z-20">
+                                <Button size="lg" className="rounded-full h-16 w-16 shadow-lg bg-accent text-accent-foreground hover:bg-accent/90" onClick={() => setIsScannerOpen(true)}>
+                                    <QrCode className="h-8 w-8" />
                                 </Button>
-                            </DialogTrigger>
-                        </div>
-                    )}
+                            </div>
+                        )}
+                    </DialogTrigger>
 
                     {activeList.items.length === 0 ? (
                         <EmptyState onScan={() => setIsScannerOpen(true)} />
