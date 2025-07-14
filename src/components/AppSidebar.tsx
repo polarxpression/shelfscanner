@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from 'react';
+import { useTheme } from 'next-themes';
 import {
   Sheet,
   SheetContent,
@@ -8,7 +9,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Plus, Trash2, X, FileText } from 'lucide-react';
+import { Plus, Trash2, X, FileText, Sun, Moon } from 'lucide-react';
 import { useSidebar } from './SidebarProvider';
 
 export function AppSidebar() {
@@ -22,6 +23,7 @@ export function AppSidebar() {
     setOpenMobile,
   } = useSidebar();
 
+  const { setTheme, theme } = useTheme();
   const [isAddingList, setIsAddingList] = useState(false);
   const [newListName, setNewListName] = useState('');
 
@@ -100,6 +102,20 @@ export function AppSidebar() {
           ))}
         </nav>
       </div>
+      <div className="p-4 border-t">
+          <Button
+            variant="ghost"
+            className="w-full justify-start"
+            onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+          >
+            {theme === 'dark' ? (
+              <Sun className="mr-2 h-4 w-4" />
+            ) : (
+              <Moon className="mr-2 h-4 w-4" />
+            )}
+            <span>{theme === 'dark' ? 'Light Mode' : 'Dark Mode'}</span>
+          </Button>
+        </div>
     </div>
   );
 
