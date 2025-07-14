@@ -3,6 +3,7 @@ import './globals.css';
 import { Toaster } from "@/components/ui/toaster"
 import { SidebarProvider } from '@/components/SidebarProvider';
 import { ThemeProvider } from '@/components/ThemeProvider';
+import { TranslationProvider } from '@/hooks/use-translation.tsx';
 
 export const metadata: Metadata = {
   title: 'ShelfScanner',
@@ -24,17 +25,19 @@ export default function RootLayout({
         <meta name="theme-color" content="#ffffff" />
       </head>
       <body className="font-body antialiased">
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-        >
-          <SidebarProvider>
-            {children}
-          </SidebarProvider>
-          <Toaster />
-        </ThemeProvider>
+        <TranslationProvider>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
+            <SidebarProvider>
+              {children}
+            </SidebarProvider>
+            <Toaster />
+          </ThemeProvider>
+        </TranslationProvider>
       </body>
     </html>
   );

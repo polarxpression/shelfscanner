@@ -16,8 +16,10 @@ import { Label } from "@/components/ui/label";
 import { Plus, Trash2, X, FileText, Sun, Moon } from 'lucide-react';
 import { useSidebar } from './SidebarProvider';
 import { cn } from '@/lib/utils';
+import { useTranslation } from '@/hooks/use-translation.tsx';
 
 export function AppSidebar() {
+  const { t } = useTranslation();
   const {
     lists,
     setLists,
@@ -65,21 +67,21 @@ export function AppSidebar() {
       <div className="flex-grow p-2 overflow-y-auto">
         <div className="p-2">
             <Button onClick={() => setIsAddingList(true)} className="w-full">
-            <Plus className="mr-2 h-4 w-4" /> New List
+            <Plus className="mr-2 h-4 w-4" /> {t('newList')}
             </Button>
             {isAddingList && (
             <form onSubmit={handleAddList} className="mt-4 p-2 bg-muted rounded-md">
-                <Label htmlFor="new-list-name" className="sr-only">List Name</Label>
+                <Label htmlFor="new-list-name" className="sr-only">{t('listName')}</Label>
                 <Input
                 id="new-list-name"
                 value={newListName}
                 onChange={(e) => setNewListName(e.target.value)}
-                placeholder="Enter list name"
+                placeholder={t('enterListName')}
                 className="mb-2"
                 />
                 <div className="flex justify-end gap-2">
-                <Button type="button" variant="ghost" size="sm" onClick={() => setIsAddingList(false)}>Cancel</Button>
-                <Button type="submit" size="sm">Add</Button>
+                <Button type="button" variant="ghost" size="sm" onClick={() => setIsAddingList(false)}>{t('cancel')}</Button>
+                <Button type="submit" size="sm">{t('add')}</Button>
                 </div>
             </form>
             )}
@@ -120,7 +122,7 @@ export function AppSidebar() {
                 ) : (
                   <Moon className="mr-2 h-4 w-4" />
                 )}
-                <span className="ml-2">{theme === 'dark' ? 'Light Mode' : 'Dark Mode'}</span>
+                <span className="ml-2">{theme === 'dark' ? t('lightMode') : t('darkMode')}</span>
               </>
             ) : <div className="h-4 w-4 mr-2" />}
           </Button>
@@ -134,27 +136,27 @@ export function AppSidebar() {
           <SheetTitle className="text-xl font-bold text-primary">ShelfScanner</SheetTitle>
           <SheetClose>
             <X className="h-5 w-5" />
-            <span className="sr-only">Close</span>
+            <span className="sr-only">{t('close')}</span>
           </SheetClose>
         </SheetHeader>
       <div className="flex-grow p-2 overflow-y-auto">
         <div className="p-2">
             <Button onClick={() => setIsAddingList(true)} className="w-full">
-            <Plus className="mr-2 h-4 w-4" /> New List
+            <Plus className="mr-2 h-4 w-4" /> {t('newList')}
             </Button>
             {isAddingList && (
             <form onSubmit={handleAddList} className="mt-4 p-2 bg-muted rounded-md">
-                <Label htmlFor="new-list-name-mobile" className="sr-only">List Name</Label>
+                <Label htmlFor="new-list-name-mobile" className="sr-only">{t('listName')}</Label>
                 <Input
                 id="new-list-name-mobile"
                 value={newListName}
                 onChange={(e) => setNewListName(e.target.value)}
-                placeholder="Enter list name"
+                placeholder={t('enterListName')}
                 className="mb-2"
                 />
                 <div className="flex justify-end gap-2">
-                <Button type="button" variant="ghost" size="sm" onClick={() => setIsAddingList(false)}>Cancel</Button>
-                <Button type="submit" size="sm">Add</Button>
+                <Button type="button" variant="ghost" size="sm" onClick={() => setIsAddingList(false)}>{t('cancel')}</Button>
+                <Button type="submit" size="sm">{t('add')}</Button>
                 </div>
             </form>
             )}
@@ -198,7 +200,7 @@ export function AppSidebar() {
                 ) : (
                   <Moon className="mr-2 h-4 w-4" />
                 )}
-                <span className="ml-2">{theme === 'dark' ? 'Light Mode' : 'Dark Mode'}</span>
+                <span className="ml-2">{theme === 'dark' ? t('lightMode') : t('darkMode')}</span>
               </>
             ) : <div className="h-4 w-4 mr-2" />}
           </Button>

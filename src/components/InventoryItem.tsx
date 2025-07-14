@@ -18,6 +18,7 @@ import {
   DialogFooter,
   DialogClose,
 } from "@/components/ui/dialog"
+import { useTranslation } from '@/hooks/use-translation.tsx';
 
 interface InventoryItemProps {
   item: InventoryItem;
@@ -35,6 +36,7 @@ interface EditFormState {
 }
 
 export function InventoryItem({ item, onUpdate, onDelete }: InventoryItemProps) {
+  const { t } = useTranslation();
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [editFormState, setEditFormState] = useState<EditFormState>({
     barcode: item.barcode,
@@ -116,46 +118,46 @@ export function InventoryItem({ item, onUpdate, onDelete }: InventoryItemProps) 
                             size="icon"
                             onClick={openEditDialog}
                             aria-label={`Edit item ${item.name}`}
-                            className="text-muted-foreground hover:text-secondary "
+                            className="text-muted-foreground hover:text-primary"
                             >
                             <Edit className="h-5 w-5" />
                         </Button>
                     </DialogTrigger>
                     <DialogContent>
                         <DialogHeader>
-                            <DialogTitle>Edit Item</DialogTitle>
+                            <DialogTitle>{t('editItem')}</DialogTitle>
                         </DialogHeader>
                         <form onSubmit={handleEditSubmit}>
                             <div className="grid gap-4 py-4">
                                <div className="space-y-2">
-                                    <Label htmlFor="barcode">Barcode</Label>
+                                    <Label htmlFor="barcode">{t('barcode')}</Label>
                                     <Input id="barcode" name="barcode" value={editFormState.barcode} onChange={handleEditFormChange} required />
                                 </div>
                                <div className="space-y-2">
-                                    <Label htmlFor="name">Name (Optional)</Label>
+                                    <Label htmlFor="name">{t('nameOptional')}</Label>
                                     <Input id="name" name="name" value={editFormState.name} onChange={handleEditFormChange} />
                                 </div>
                                 <div className="space-y-2">
-                                    <Label htmlFor="description">Description (Optional)</Label>
+                                    <Label htmlFor="description">{t('descriptionOptional')}</Label>
                                     <Textarea id="description" name="description" value={editFormState.description} onChange={handleEditFormChange} />
                                 </div>
                                 <div className="space-y-2">
-                                    <Label htmlFor="quantity">Quantity</Label>
+                                    <Label htmlFor="quantity">{t('quantity')}</Label>
                                     <Input id="quantity" name="quantity" type="number" min="0" value={editFormState.quantity} onChange={handleEditFormChange} required />
                                 </div>
                                 <div className="space-y-2">
-                                  <Label>Shelf Position (Optional)</Label>
+                                  <Label>{t('shelfPositionOptional')}</Label>
                                   <div className="flex gap-2">
-                                    <Input id="shelfColumn" name="shelfColumn" type="text" inputMode="numeric" pattern="[0-9]*" placeholder="Column" value={editFormState.shelfColumn} onChange={handleEditFormChange} />
-                                    <Input id="shelfRow" name="shelfRow" type="text" inputMode="numeric" pattern="[0-9]*" placeholder="Row" value={editFormState.shelfRow} onChange={handleEditFormChange} />
+                                    <Input id="shelfColumn" name="shelfColumn" type="text" inputMode="numeric" pattern="[0-9]*" placeholder={t('column')} value={editFormState.shelfColumn} onChange={handleEditFormChange} />
+                                    <Input id="shelfRow" name="shelfRow" type="text" inputMode="numeric" pattern="[0-9]*" placeholder={t('row')} value={editFormState.shelfRow} onChange={handleEditFormChange} />
                                   </div>
                                 </div>
                             </div>
                             <DialogFooter>
                                 <DialogClose asChild>
-                                    <Button type="button" variant="secondary">Cancel</Button>
+                                    <Button type="button" variant="secondary">{t('cancel')}</Button>
                                 </DialogClose>
-                                <Button type="submit">Save Changes</Button>
+                                <Button type="submit">{t('saveChanges')}</Button>
                             </DialogFooter>
                         </form>
                     </DialogContent>
@@ -171,12 +173,12 @@ export function InventoryItem({ item, onUpdate, onDelete }: InventoryItemProps) 
                 </Button>
             </div>
         </div>
-        <CardTitle className="mt-1 text-lg font-medium">{item.name || 'Unnamed Item'}</CardTitle>
+        <CardTitle className="mt-1 text-lg font-medium">{item.name || t('unnamedItem')}</CardTitle>
         <CardDescription className="text-sm">{item.description}</CardDescription>
         {item.shelfPosition && (
           <div className="text-sm text-muted-foreground mt-2 flex items-center">
             <MapPin className="mr-1.5 h-4 w-4" />
-            Column: {col}, Row: {row}
+            {t('column')}: {col}, {t('row')}: {row}
           </div>
         )}
       </CardHeader>
@@ -188,7 +190,7 @@ export function InventoryItem({ item, onUpdate, onDelete }: InventoryItemProps) 
                 size="icon"
                 onClick={() => handleQuantityChange(-1)}
                 disabled={item.quantity === 0}
-                aria-label="Decrease quantity"
+                aria-label={t('decreaseQuantity')}
                 className="h-9 w-9"
               >
                 <MinusCircle className="h-5 w-5" />
@@ -200,7 +202,7 @@ export function InventoryItem({ item, onUpdate, onDelete }: InventoryItemProps) 
                 variant="outline"
                 size="icon"
                 onClick={() => handleQuantityChange(1)}
-                aria-label="Increase quantity"
+                aria-label={t('increaseQuantity')}
                 className="h-9 w-9"
               >
                 <PlusCircle className="h-5 w-5" />

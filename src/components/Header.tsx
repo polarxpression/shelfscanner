@@ -9,6 +9,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useSidebar } from './SidebarProvider';
+import { useTranslation } from '@/hooks/use-translation.tsx';
 
 interface HeaderProps {
   onExportJson: () => void;
@@ -17,6 +18,7 @@ interface HeaderProps {
 }
 
 export function Header({ onExportJson, onExportTxt, listName }: HeaderProps) {
+  const { t } = useTranslation();
   const { setOpenMobile } = useSidebar();
   return (
     <header className="bg-card shadow-md sticky top-0 z-10 border-b">
@@ -30,7 +32,7 @@ export function Header({ onExportJson, onExportTxt, listName }: HeaderProps) {
               onClick={() => setOpenMobile(true)}
             >
               <Menu className="h-6 w-6" />
-              <span className="sr-only">Open Menu</span>
+              <span className="sr-only">{t('openMenu')}</span>
             </Button>
             <h1 className="text-xl font-medium font-headline text-foreground truncate">
               {listName}
@@ -40,15 +42,15 @@ export function Header({ onExportJson, onExportTxt, listName }: HeaderProps) {
             <DropdownMenuTrigger asChild>
               <Button>
                 <Download className="mr-2 h-4 w-4" />
-                Export
+                {t('export')}
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuItem onClick={onExportJson}>
-                Export as JSON
+                {t('exportAsJson')}
               </DropdownMenuItem>
               <DropdownMenuItem onClick={onExportTxt}>
-                Export as TXT
+                {t('exportAsTxt')}
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>

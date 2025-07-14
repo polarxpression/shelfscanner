@@ -6,6 +6,7 @@ import { useToast } from "@/hooks/use-toast";
 import { AlertTitle, AlertDescription } from '@/components/ui/alert';
 import { Button } from './ui/button';
 import { RefreshCw, ZapOff } from 'lucide-react';
+import { useTranslation } from '@/hooks/use-translation.tsx';
 
 interface BarcodeScannerProps {
   onScan: (barcode: string) => void;
@@ -13,6 +14,7 @@ interface BarcodeScannerProps {
 }
 
 export function BarcodeScanner({ onScan, onManualAdd }: BarcodeScannerProps) {
+  const { t } = useTranslation();
   const videoRef = useRef<HTMLVideoElement>(null);
   const [hasCameraPermission, setHasCameraPermission] = useState<boolean | null>(null);
   const { toast } = useToast();
@@ -25,8 +27,8 @@ export function BarcodeScanner({ onScan, onManualAdd }: BarcodeScannerProps) {
         setHasCameraPermission(false);
         toast({
           variant: 'destructive',
-          title: 'Unsupported Browser',
-          description: "Your browser doesn't support barcode scanning. Try adding items manually.",
+          title: t('unsupportedBrowserTitle'),
+          description: t('unsupportedBrowserDescription'),
         });
         return;
       }
@@ -42,8 +44,8 @@ export function BarcodeScanner({ onScan, onManualAdd }: BarcodeScannerProps) {
         setHasCameraPermission(false);
         toast({
           variant: 'destructive',
-          title: 'Camera Access Denied',
-          description: 'Please enable camera permissions in your browser settings.',
+          title: t('cameraAccessDeniedTitle'),
+          description: t('cameraAccessDeniedDescription'),
         });
       }
     };
@@ -57,7 +59,7 @@ export function BarcodeScanner({ onScan, onManualAdd }: BarcodeScannerProps) {
         stream.getTracks().forEach(track => track.stop());
       }
     };
-  }, [toast]);
+  }, [toast, t]);
 
   useEffect(() => {
     if (!hasCameraPermission) return;
@@ -99,16 +101,16 @@ export function BarcodeScanner({ onScan, onManualAdd }: BarcodeScannerProps) {
       {hasCameraPermission === false && (
         <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/80 rounded-md p-4 text-center">
             <ZapOff className="h-12 w-12 text-destructive mb-4" />
-            <AlertTitle className="text-destructive text-lg">Camera Error</AlertTitle>
+            <AlertTitle className="text-destructive text-lg">{t('cameraErrorTitle')}</AlertTitle>
             <AlertDescription className="text-white mb-6">
-              Could not access the camera. This might be due to a lack of permissions or browser support.
+              {t('cameraErrorDescription')}
             </AlertDescription>
             <div className="flex gap-2">
                 <Button onClick={handleRetry} variant="secondary">
                     <RefreshCw className="mr-2 h-4 w-4" />
-                    Retry
+                    {t('retry')}
                 </Button>
-                <Button onClick={onManualAdd} variant="outline">Add Manually</Button>
+                <Button onClick={onManualAdd} variant="outline">{t('addManually')}</Button>
             </div>
         </div>
       )}
