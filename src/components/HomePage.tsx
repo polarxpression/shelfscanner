@@ -9,7 +9,7 @@ import { InventoryItem } from '@/components/InventoryItem';
 import { EmptyState } from '@/components/EmptyState';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { QrCode, BookType } from 'lucide-react';
+import { QrCode, BookType, Plus } from 'lucide-react';
 import { useToast } from "@/hooks/use-toast"
 import { BarcodeScanner } from '@/components/BarcodeScanner';
 import {
@@ -176,7 +176,7 @@ export default function HomePage() {
       return acc;
     }, {} as Record<string, { barcode: string }[]>);
 
-    const jsonContent = JSON.stringify(dataToExport, null, 4);
+    const jsonContent = JSON.stringify(dataToExport, null, 2);
     downloadFile(`${activeList.name}_inventory.json`, jsonContent, 'application/json');
     toast({ title: "Export Successful", description: "Inventory JSON has been downloaded." });
   };
@@ -216,11 +216,10 @@ export default function HomePage() {
             <Dialog open={isScannerOpen} onOpenChange={setIsScannerOpen}>
                 <Dialog open={isManualAddOpen} onOpenChange={setIsManualAddOpen}>
                     {activeList.items.length > 0 && (
-                        <div className="mb-6 text-center sm:text-left">
+                        <div className="fixed bottom-8 right-8 z-20">
                             <DialogTrigger asChild>
-                                <Button size="lg" className="bg-accent text-accent-foreground hover:bg-accent/90">
-                                    <QrCode className="mr-2 h-5 w-5" />
-                                    Scan New Item
+                                <Button size="lg" className="rounded-full h-16 w-16 shadow-lg bg-accent text-accent-foreground hover:bg-accent/90">
+                                    <Plus className="h-8 w-8" />
                                 </Button>
                             </DialogTrigger>
                         </div>

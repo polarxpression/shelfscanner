@@ -94,14 +94,14 @@ export function InventoryItem({ item, onUpdate, onDelete }: InventoryItemProps) 
   const [col, row] = item.shelfPosition.split('-');
 
   return (
-    <Card className="overflow-hidden transition-shadow hover:shadow-lg flex flex-col">
-      <CardHeader className="p-4 sm:p-6">
+    <Card className="overflow-hidden transition-shadow duration-300 hover:shadow-xl flex flex-col">
+      <CardHeader className="p-4 sm:p-5">
         <div className="flex items-start justify-between">
-            <div className="font-mono text-sm text-primary font-semibold flex items-center">
-                <Barcode className="mr-2 h-5 w-5 shrink-0" />
+            <div className="font-mono text-xs text-primary font-semibold flex items-center pt-1">
+                <Barcode className="mr-2 h-4 w-4 shrink-0" />
                 <span className="truncate">{item.barcode}</span>
             </div>
-            <div className='flex'>
+            <div className='flex -mr-2 -mt-2'>
                 <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
                     <DialogTrigger asChild>
                         <Button
@@ -109,7 +109,7 @@ export function InventoryItem({ item, onUpdate, onDelete }: InventoryItemProps) 
                             size="icon"
                             onClick={openEditDialog}
                             aria-label={`Edit item ${item.name}`}
-                            className="text-muted-foreground hover:text-primary hover:bg-primary/10 -mt-2 shrink-0"
+                            className="text-muted-foreground hover:text-primary"
                             >
                             <Edit className="h-5 w-5" />
                         </Button>
@@ -154,14 +154,14 @@ export function InventoryItem({ item, onUpdate, onDelete }: InventoryItemProps) 
                     size="icon"
                     onClick={() => onDelete(item.id)}
                     aria-label={`Delete item ${item.name}`}
-                    className="text-muted-foreground hover:text-destructive hover:bg-destructive/10 -mt-2 shrink-0"
+                    className="text-muted-foreground hover:text-destructive"
                 >
                     <Trash2 className="h-5 w-5" />
                 </Button>
             </div>
         </div>
-        <CardTitle className="mt-2 text-lg">{item.name || 'Unnamed Item'}</CardTitle>
-        <CardDescription>{item.description}</CardDescription>
+        <CardTitle className="mt-1 text-lg font-medium">{item.name || 'Unnamed Item'}</CardTitle>
+        <CardDescription className="text-sm">{item.description}</CardDescription>
         {item.shelfPosition && (
           <div className="text-sm text-muted-foreground mt-2 flex items-center">
             <MapPin className="mr-1.5 h-4 w-4" />
@@ -169,10 +169,8 @@ export function InventoryItem({ item, onUpdate, onDelete }: InventoryItemProps) 
           </div>
         )}
       </CardHeader>
-      <CardContent className="p-4 sm:p-6 pt-0 flex-grow flex flex-col justify-end">
-         <div className="grid grid-cols-1 gap-4">
-          <div className="space-y-2">
-            <Label>Quantity</Label>
+      <CardContent className="p-4 sm:p-5 pt-0 flex-grow flex flex-col justify-end">
+         <div className="flex items-center justify-between">
             <div className="flex items-center space-x-2">
               <Button
                 variant="outline"
@@ -180,10 +178,11 @@ export function InventoryItem({ item, onUpdate, onDelete }: InventoryItemProps) 
                 onClick={() => handleQuantityChange(-1)}
                 disabled={item.quantity === 0}
                 aria-label="Decrease quantity"
+                className="h-9 w-9"
               >
                 <MinusCircle className="h-5 w-5" />
               </Button>
-              <span className="font-bold text-lg w-10 text-center" aria-live="polite">
+              <span className="font-bold text-xl w-12 text-center" aria-live="polite">
                 {item.quantity}
               </span>
               <Button
@@ -191,31 +190,12 @@ export function InventoryItem({ item, onUpdate, onDelete }: InventoryItemProps) 
                 size="icon"
                 onClick={() => handleQuantityChange(1)}
                 aria-label="Increase quantity"
+                className="h-9 w-9"
               >
                 <PlusCircle className="h-5 w-5" />
               </Button>
             </div>
           </div>
-          <div className="space-y-2">
-            <Label>Shelf Position</Label>
-            <div className="flex items-center gap-2">
-                <Input
-                type="number"
-                min="0"
-                placeholder="Col"
-                value={col || ''}
-                onChange={(e) => onUpdate(item.id, { shelfPosition: `${e.target.value}-${row || ''}` })}
-                />
-                <Input
-                type="number"
-                min="0"
-                placeholder="Row"
-                value={row || ''}
-                onChange={(e) => onUpdate(item.id, { shelfPosition: `${col || ''}-${e.target.value}` })}
-                />
-            </div>
-          </div>
-        </div>
       </CardContent>
     </Card>
   );

@@ -19,10 +19,10 @@ interface HeaderProps {
 export function Header({ onExportJson, onExportTxt, listName }: HeaderProps) {
   const { setOpenMobile } = useSidebar();
   return (
-    <header className="bg-card shadow-sm sticky top-0 z-10 border-b">
+    <header className="bg-card shadow-md sticky top-0 z-10 border-b">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2">
             <Button
               variant="ghost"
               size="icon"
@@ -32,13 +32,13 @@ export function Header({ onExportJson, onExportTxt, listName }: HeaderProps) {
               <Menu className="h-6 w-6" />
               <span className="sr-only">Open Menu</span>
             </Button>
-            <h1 className="text-2xl font-bold font-headline text-primary truncate">
+            <h1 className="text-xl font-medium font-headline text-foreground truncate">
               {listName}
             </h1>
           </div>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="outline">
+              <Button>
                 <Download className="mr-2 h-4 w-4" />
                 Export
               </Button>
