@@ -3,7 +3,7 @@ import './globals.css';
 import { Toaster } from "@/components/ui/toaster"
 import { SidebarProvider } from '@/components/SidebarProvider';
 import { ThemeProvider } from '@/components/ThemeProvider';
-import { TranslationProvider } from '@/hooks/use-translation.tsx';
+import { TranslationProvider } from '@/hooks/use-translation';
 
 export const metadata: Metadata = {
   title: 'ShelfScanner',

@@ -1,6 +1,6 @@
 import { QrCode, PackageSearch } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { useTranslation } from '@/hooks/use-translation.tsx';
+import { useTranslation } from '@/hooks/use-translation';
 
 interface EmptyStateProps {
   onScan: () => void;
