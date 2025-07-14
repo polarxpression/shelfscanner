@@ -2,23 +2,8 @@ import type {NextConfig} from 'next';
 import withPWA from 'next-pwa';
 
 const nextConfig: NextConfig = {
-  /* config options here */
-  typescript: {
-    ignoreBuildErrors: true,
-  },
-  eslint: {
-    ignoreDuringBuilds: true,
-  },
-  images: {
-    remotePatterns: [
-      {
-        protocol: 'https',
-        hostname: 'placehold.co',
-        port: '',
-        pathname: '/**',
-      },
-    ],
-  },
+  output: 'export',
+  basePath: process.env.PAGES_BASE_PATH,
 };
 
 export default withPWA({
