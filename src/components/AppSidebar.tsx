@@ -1,6 +1,7 @@
+
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useTheme } from 'next-themes';
 import {
   Sheet,
@@ -26,6 +27,11 @@ export function AppSidebar() {
   const { setTheme, theme } = useTheme();
   const [isAddingList, setIsAddingList] = useState(false);
   const [newListName, setNewListName] = useState('');
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const handleAddList = (e: React.FormEvent) => {
     e.preventDefault();
@@ -108,12 +114,16 @@ export function AppSidebar() {
             className="w-full justify-start"
             onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
           >
-            {theme === 'dark' ? (
-              <Sun className="mr-2 h-4 w-4" />
-            ) : (
-              <Moon className="mr-2 h-4 w-4" />
+            {mounted && (
+              <>
+                {theme === 'dark' ? (
+                  <Sun className="mr-2 h-4 w-4" />
+                ) : (
+                  <Moon className="mr-2 h-4 w-4" />
+                )}
+              </>
             )}
-            <span>{theme === 'dark' ? 'Light Mode' : 'Dark Mode'}</span>
+            <span className="ml-2">{theme === 'dark' ? 'Light Mode' : 'Dark Mode'}</span>
           </Button>
         </div>
     </div>
