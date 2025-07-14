@@ -251,7 +251,7 @@ export default function HomePage() {
               <DialogTrigger asChild>
                 {activeList.items.length > 0 ? (
                   <div className="fixed bottom-8 right-8 z-20">
-                    <Button size="lg" className="rounded-full h-16 w-16 shadow-lg !bg-primary hover:!bg-primary/90" onClick={() => setIsScannerOpen(true)}>
+                    <Button size="lg" className="rounded-full h-16 w-16 shadow-lg" onClick={() => setIsScannerOpen(true)}>
                       <QrCode className="h-8 w-8 text-primary-foreground" />
                     </Button>
                   </div>
