@@ -8,6 +8,7 @@ import {
   SheetContent,
   SheetHeader,
   SheetTitle,
+  SheetClose
 } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -128,9 +129,13 @@ export function AppSidebar() {
   
   const mobileContent = (
     <div className="flex flex-col h-full bg-card">
-      <SheetHeader className="p-4 border-b">
-        <SheetTitle className="text-xl font-bold text-primary">ShelfScanner</SheetTitle>
-      </SheetHeader>
+       <SheetHeader className="p-4 border-b flex flex-row items-center justify-between">
+          <SheetTitle className="text-xl font-bold text-primary">ShelfScanner</SheetTitle>
+          <SheetClose>
+            <X className="h-5 w-5" />
+            <span className="sr-only">Close</span>
+          </SheetClose>
+        </SheetHeader>
       <div className="flex-grow p-2 overflow-y-auto">
         <div className="p-2">
             <Button onClick={() => setIsAddingList(true)} className="w-full">
@@ -211,7 +216,7 @@ export function AppSidebar() {
   if (isMobile) {
     return (
       <Sheet open={openMobile} onOpenChange={setOpenMobile}>
-        <SheetContent side="left" className="p-0 w-80 bg-card">
+        <SheetContent side="left" className="p-0 w-80 bg-card" showCloseButton={false}>
           {mobileContent}
         </SheetContent>
       </Sheet>
