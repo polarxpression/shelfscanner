@@ -9,7 +9,7 @@ import { InventoryItem } from '@/components/InventoryItem';
 import { EmptyState } from '@/components/EmptyState';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { QrCode, BookType } from 'lucide-react';
+import { ScanBarcode, BookType } from 'lucide-react';
 import { useToast } from "@/hooks/use-toast"
 import { BarcodeScanner } from '@/components/BarcodeScanner';
 import {
@@ -248,8 +248,8 @@ export default function HomePage() {
         <main className="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 py-8">
           {/* QR Code Button always visible */}
           <div className="fixed bottom-8 right-8 z-20">
-            <Button size="lg" className="rounded-full h-16 w-16 shadow-lg" onClick={() => setIsScannerOpen(true)}>
-              <QrCode className="h-8 w-8 text-primary-foreground" />
+            <Button size="lg" className="rounded-full h-16 w-16 shadow-lg p-0" onClick={() => setIsScannerOpen(true)}>
+              <ScanBarcode className="h-8 w-8 stroke-primary-foreground" />
             </Button>
           </div>
           <Dialog open={isScannerOpen} onOpenChange={setIsScannerOpen}>
