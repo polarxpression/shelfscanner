@@ -116,7 +116,7 @@ export function InventoryItem({ item, onUpdate, onDelete }: InventoryItemProps) 
                             size="icon"
                             onClick={openEditDialog}
                             aria-label={`Edit item ${item.name}`}
-                            className="text-muted-foreground hover:text-primary"
+                            className="text-muted-foreground hover:text-secondary "
                             >
                             <Edit className="h-5 w-5" />
                         </Button>
@@ -165,7 +165,7 @@ export function InventoryItem({ item, onUpdate, onDelete }: InventoryItemProps) 
                     size="icon"
                     onClick={() => onDelete(item.id)}
                     aria-label={`Delete item ${item.name}`}
-                    className="text-muted-foreground hover:text-destructive"
+                    className="text-muted-foreground hover:text-destructive-foreground hover:bg-destructive"
                 >
                     <Trash2 className="h-5 w-5" />
                 </Button>

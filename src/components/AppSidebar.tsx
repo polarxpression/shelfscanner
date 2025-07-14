@@ -98,10 +98,10 @@ export function AppSidebar() {
               <Button
                 variant="ghost"
                 size="icon"
-                className={cn("h-8 w-8 ml-1", isMobile ? "opacity-100" : "opacity-0 group-hover:opacity-100")}
+                className={cn("h-8 w-8 ml-1 text-muted-foreground hover:bg-destructive hover:text-destructive-foreground", isMobile ? "opacity-100" : "opacity-0 group-hover:opacity-100")}
                 onClick={() => handleDeleteList(list.id)}
               >
-                <Trash2 className="h-4 w-4 text-destructive" />
+                <Trash2 className="h-4 w-4" />
               </Button>
             </div>
           ))}
@@ -176,10 +176,10 @@ export function AppSidebar() {
               <Button
                 variant="ghost"
                 size="icon"
-                className={cn("h-8 w-8 ml-1", isMobile ? "opacity-100" : "opacity-0 group-hover:opacity-100")}
+                className={cn("h-8 w-8 ml-1 text-muted-foreground hover:bg-destructive hover:text-destructive-foreground", isMobile ? "opacity-100" : "opacity-0 group-hover:opacity-100 ")}
                 onClick={() => handleDeleteList(list.id)}
               >
-                <Trash2 className="h-4 w-4 text-destructive" />
+                <Trash2 className="h-4 w-4" />
               </Button>
             </div>
           ))}
