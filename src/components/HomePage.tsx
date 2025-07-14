@@ -126,7 +126,7 @@ export default function HomePage() {
     setNewItemDetails(defaultItemState);
   };
 
-  const handleUpdateItem = (id: string, updates: Partial<Omit<InventoryItemType, 'id'>>) => {
+  const handleUpdateItem = (id: string, updates: Partial<Omit<InventoryItemType, 'id' | 'barcode'>>) => {
     if (!activeList) return;
     const updatedLists = lists.map(list => {
         if (list.id === activeListId) {
@@ -246,17 +246,14 @@ export default function HomePage() {
       <div className="flex flex-col min-h-screen bg-background text-foreground">
         <Header onExportJson={handleExportJson} onExportTxt={handleExportTxt} listName={activeList.name} />
         <main className="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          {/* QR Code Button always visible */}
+          <div className="fixed bottom-8 right-8 z-20">
+            <Button size="lg" className="rounded-full h-16 w-16 shadow-lg" onClick={() => setIsScannerOpen(true)}>
+              <QrCode className="h-8 w-8 text-primary-foreground" />
+            </Button>
+          </div>
           <Dialog open={isScannerOpen} onOpenChange={setIsScannerOpen}>
             <Dialog open={isManualAddOpen} onOpenChange={setIsManualAddOpen}>
-              <DialogTrigger asChild>
-                {activeList.items.length > 0 ? (
-                  <div className="fixed bottom-8 right-8 z-20">
-                    <Button size="lg" className="rounded-full h-16 w-16 shadow-lg" onClick={() => setIsScannerOpen(true)}>
-                      <QrCode className="h-8 w-8 text-primary-foreground" />
-                    </Button>
-                  </div>
-                ) : <div />}
-              </DialogTrigger>
 
               {activeList.items.length === 0 ? (
                 <EmptyState onScan={() => setIsScannerOpen(true)} />
