@@ -15,6 +15,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Plus, Trash2, X, FileText, Sun, Moon } from 'lucide-react';
 import { useSidebar } from './SidebarProvider';
+import { cn } from '@/lib/utils';
 
 export function AppSidebar() {
   const {
@@ -97,7 +98,7 @@ export function AppSidebar() {
               <Button
                 variant="ghost"
                 size="icon"
-                className="h-8 w-8 ml-1 opacity-0 group-hover:opacity-100"
+                className={cn("h-8 w-8 ml-1", isMobile ? "opacity-100" : "opacity-0 group-hover:opacity-100")}
                 onClick={() => handleDeleteList(list.id)}
               >
                 <Trash2 className="h-4 w-4 text-destructive" />
@@ -175,7 +176,7 @@ export function AppSidebar() {
               <Button
                 variant="ghost"
                 size="icon"
-                className="h-8 w-8 ml-1 opacity-0 group-hover:opacity-100"
+                className={cn("h-8 w-8 ml-1", isMobile ? "opacity-100" : "opacity-0 group-hover:opacity-100")}
                 onClick={() => handleDeleteList(list.id)}
               >
                 <Trash2 className="h-4 w-4 text-destructive" />
