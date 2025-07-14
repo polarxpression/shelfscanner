@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { useToast } from "@/hooks/use-toast";
-import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
+import { AlertTitle, AlertDescription } from '@/components/ui/alert';
 import { Button } from './ui/button';
 import { RefreshCw, ZapOff } from 'lucide-react';
 
